@@ -1,4 +1,4 @@
-#dockerproxy#
+#dockerproxy
 
 **requirments**
 
@@ -10,18 +10,18 @@
 
 - run the following to initialize the docker host and config
 
-    apt update && apt install sudo && sudo apt upgrade -y && \
-    sudo apt install make git -y && make configure
+        apt update && apt install sudo && sudo apt upgrade -y && \
+        sudo apt install make git -y && make configure
 
 - clone this repo to your docker vm
 
-    git clone git@github.com:bustinstuff/dockerproxy.git
+        git clone git@github.com:bustinstuff/dockerproxy.git
 
 - update the NGINX_HOST=localhost line from docker-compose.yml to reflect your host / settings
 
 - run config
 
-    cd dockerproxy && make config && make start
+        cd dockerproxy && make config && make start
 
 **commands**
 
