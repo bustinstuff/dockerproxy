@@ -1,0 +1,53 @@
+# dockerproxy docker compose configuration
+
+---
+version: '3'
+services:
+  nginx:
+    image: nginx:1.15.10
+    container_name: nginx
+    restart: always
+    environment:
+      - NGINX_HOST=localhost
+      - APP_NAME=
+    ports:
+      - 80:80
+      - 443:443
+    volumes:
+      - /volumes/nginx/nginx.conf:/etc/nginx/conf.d/default.conf
+      - /volumes/nginx/error.log:/etc/nginx/error_log.log
+      - /volumes/nginx/cache/:/etc/nginx/cache/
+      - /volumes/nginx/html/:/usr/share/nginx/html/
+      - /volumes/letsencrypt/:/etc/letsencrypt/
+
+    #command: rm /usr/share/nginx/html/index.html && touch /usr/share/nginx/html/index.html
+
+    #command: /bin/bash -c "envsubst < /etc/nginx/conf.d/mysite.template > /etc/nginx/conf.d/default.conf && exec nginx -g 'daemon off;'"
+
+    #command: [nginx-debug, '-g', 'daemon off;']
+
+    #command: apt update && apt upgrade -y && service nginx start
+
+  letsencrypt:
+    image: neilpang/acme.sh
+    container_name: letsencrypt
+    restart: always
+    environment:
+      - TERM=xterm
+    ports:
+      - "80"
+      - "443"
+    volumes:
+      - /volumes/letsencrypt/:/etc/letsencrypt/
+      - /volumes/letsencrypt/:/var/lib/letsencrypt
+
+    #command: apt update && apt upgrade -y
+
+    #command:  bash -c "sleep 6 && certbot certonly --standalone -d wat010.opsrobot.co.uk --text --agree-tos --email george@opsrobot.co.uk --server https://acme-v01.api.letsencrypt.org/directory --rsa-key-size 4096 --verbose --renew-by-default --standalone-supported-challenges http-01"
+    #entrypoint: ""
+
+    #app:
+    #  image: app_image:latest
+    #  container_name: app
+    #  expose:
+    #    - "80"
