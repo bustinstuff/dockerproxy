@@ -14,11 +14,16 @@ services:
       - 80:80
       - 443:443
     volumes:
-      - /volumes/nginx/nginx.conf:/etc/nginx/conf.d/default.conf
-      - /volumes/nginx/error.log:/etc/nginx/error_log.log
+      - /volumes/nginx/default.conf:/etc/nginx/conf.d/default.conf
+      - /volumes/nginx/error.log:/etc/nginx/error_log.log  ## ?
       - /volumes/nginx/cache/:/etc/nginx/cache/
       - /volumes/nginx/html/:/usr/share/nginx/html/
       - /volumes/letsencrypt/:/etc/letsencrypt/
+    logging:
+      driver: ${NGINX_WEB_LOG_DRIVER:-json-file}
+      options:
+        max-size: ${NGINX_WEB_LOG_MAX_SIZE:-4m}
+        max-file: ${NGINX_WEB_LOG_MAX_FILE:-10}
 
     #command: rm /usr/share/nginx/html/index.html && touch /usr/share/nginx/html/index.html
 
@@ -29,7 +34,7 @@ services:
     #command: apt update && apt upgrade -y && service nginx start
 
   letsencrypt:
-    image: neilpang/acme.sh
+    image: neilpang/acme.sh  #  jrcs/letsencrypt-nginx-proxy-companion
     container_name: letsencrypt
     restart: always
     environment:
@@ -40,6 +45,11 @@ services:
     volumes:
       - /volumes/letsencrypt/:/etc/letsencrypt/
       - /volumes/letsencrypt/:/var/lib/letsencrypt
+    logging:
+      driver: ${NGINX_LETSENCRYPT_LOG_DRIVER:-json-file}
+      options:
+        max-size: ${NGINX_LETSENCRYPT_LOG_MAX_SIZE:-2m}
+        max-file: ${NGINX_LETSENCRYPT_LOG_MAX_FILE:-10}
 
     #command: apt update && apt upgrade -y
 
@@ -51,3 +61,8 @@ services:
     #  container_name: app
     #  expose:
     #    - "80"
+
+#networks:
+#  default:
+#    external:
+#      name: ${NETWORK:-webproxy}
