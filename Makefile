@@ -2,7 +2,6 @@
 
 SHELL := /bin/bash
 NGINX_HOST = 'localhost'
-APP_LOC = '/usr/share/nginx/html/'
 
 .PHONY:
 	configure wipe start stop
@@ -14,8 +13,8 @@ configure:
 
 	sudo cp nginx.conf /volumes/nginx/nginx.conf.template
 
-	sudo APP_LOC=$(APP_LOC) NGINX_HOST=$(NGINX_HOST) \
-	envsubst '$$APP_LOC $$NGINX_HOST' < /volumes/nginx/nginx.conf.template > /volumes/nginx/nginx.conf
+	sudo NGINX_HOST=$(NGINX_HOST) \
+	envsubst '$$NGINX_HOST' < /volumes/nginx/nginx.conf.template > /volumes/nginx/nginx.conf
 
 	sudo openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
 	-subj "/C=US/ST=CA/L=San Francisco/O=Docker Proxy/CN=localhost" \
