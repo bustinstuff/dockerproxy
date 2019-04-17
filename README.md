@@ -1,5 +1,11 @@
 # dockerproxy
 
+- Creates an nginx docker service that redirects port 80 requests to your app on port 443
+
+- Uses acme docker / letsencrypt to create / register ssl
+
+- Installs a cron job that updates the letsencrypt certs
+
 **requirments**
 
 - a vm with docker installed

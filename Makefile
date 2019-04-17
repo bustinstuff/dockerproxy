@@ -1,24 +1,37 @@
 # dockerproxy makefile
 
 SHELL := /bin/bash
+NGINX_HOST = 'localhost'
+APP_LOC = '/usr/share/nginx/html/'
 
 .PHONY:
-	configure clean start stop
+	configure wipe start stop
 
 configure:
-	sudo mkdir -p /volumes/{nginx/{cache,html},letsencrypt}
-	sudo touch /volumes/nginx/error.log
-	sudo touch /volumes/nginx/html/default.html
-	sudo cp configs/nginx.conf /volumes/nginx/default.conf
-	sudo cp configs/letsencrypt.conf /volumes/letsencrypt/letsencrypt.conf
- 	sudo systemctl enable docker
+	sudo mkdir -p /volumes/{acme,nginx/{cache,html/certbot}}
 
-clean:
-	sudo docker container prune -y
+	sudo touch /volumes/nginx/html/index.html
+
+	sudo cp nginx.conf /volumes/nginx/nginx.conf.template
+
+	sudo APP_LOC=$(APP_LOC) NGINX_HOST=$(NGINX_HOST) \
+	envsubst '$$APP_LOC $$NGINX_HOST' < /volumes/nginx/nginx.conf.template > /volumes/nginx/nginx.conf
+
+	sudo openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
+	-subj "/C=US/ST=CA/L=San Francisco/O=Docker Proxy/CN=localhost" \
+	-keyout /volumes/acme/default.key \
+	-out /volumes/acme/default.crt
+
+	sudo openssl dhparam -out /volumes/acme/dhparam.pem 2048
+
+wipe:
+	sudo docker-compose down
+	sudo docker container prune --force
+	sudo docker network prune --force
+	sudo rm -rf /volumes
 
 start:
-	docker-compose up -d
+	sudo docker-compose up -d
 
 stop:
-	docker-compose down
-	make clean
+	sudo docker-compose down
