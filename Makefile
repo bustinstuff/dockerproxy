@@ -21,7 +21,7 @@ config-nginx:
 
 generate-default-ssl:
 	sudo openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
-	-subj "/C=US/ST=CA/L=San Francisco/O=Docker Proxy/CN=localhost" \
+	-subj "/C=US/ST=CA/L=San Francisco/O=Docker Proxy/CN=$(NGINX_HOST)" \
 	-keyout volumes/acme/default.key \
 	-out volumes/acme/default.crt
 
