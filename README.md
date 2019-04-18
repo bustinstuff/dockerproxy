@@ -14,42 +14,32 @@
 
 **installation**
 
-- run the following to initialize the docker host and config
+- run the following to initialize the docker host
 
         apt update && apt install sudo && sudo apt upgrade -y && \
-        sudo apt install make git -y && make configure
+        sudo apt install make git -y
 
 - clone this repo to your docker vm
 
         git clone git@github.com:bustinstuff/dockerproxy.git
 
-- update the NGINX_HOST=localhost line from docker-compose.yml to reflect your host / settings
+- switch to working directory in project
 
-- run config
+        cd dockerproxy
 
-        cd dockerproxy && make config && make start
+- update docker-compose.yml
+
+        NGINX_HOST=localhost to reflect your host / settings
+
+- run the following to configure
+
+        make config && make start
 
 **commands**
 
-    make config
-    make clean
-    make start
-    make stop
-
-**config**
-
-- creates shared volumnes for nginx / letsencrypt
-- copies nginx / letsencrypt configs
-
-**clean**
-
-- removes old docker containers
-
-**start**
-
-- starts docker compose
-
-**stop**
-
-- stops docker compose
-- runs clean
+    make config                 # initial configuration
+    make nginx-config           # run to update any changes made to nginx.conf
+    make generate-default-ssl   # regenerate the default ssl
+    make wipe                   # wipe all config / docker containers / ssl certs
+    make start                  # start docker comnpose as a deamon
+    make stop                   # stop docker compose
