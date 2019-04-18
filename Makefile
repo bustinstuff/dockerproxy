@@ -1,7 +1,7 @@
 # dockerproxy makefile
 
 SHELL := /bin/bash
-NGINX_HOST = 'localhost'
+NGINX_HOST = localhost
 
 .PHONY:
 	config nginx-config generate-default-ssl wipe start stop
